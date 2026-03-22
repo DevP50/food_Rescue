@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+   <script src="{{ url_for('static', filename='script.js') }}"></script>
+   <title>{% block title %}NoWasteAm{% endblock %}</title>
+   {% block extra_head %}{% endblock %}
+
+</head>
+
+<body>
+  
+    
+  
+
+    <div class="container mt-4">
+      {% block content %}
+      {% endblock %}
+      <script>
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.flash-message');
+            alerts.forEach(alert => alert.style.display = 'none');
+        }, 5000);
+      </script> <!--The script element allows authors to include dynamic script and data blocks in their documents-->
+
+    </div>  
+    <script src="https://cdn.jsdeliver.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

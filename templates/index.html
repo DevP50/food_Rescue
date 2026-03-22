@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+   {% block content %}
+   
+
+<center>
+  <h1 class="text-center mb-4">Welcome To NoWasteAm</h1>
+</center>
+<center>
+<h3 class="text-center mb-4"><strong>Share Food. Share Care</strong></h3>
+</center>
+<center>
+<img src="https://olioapp.com/en/wp-content/uploads/sites/1/2026/02/20240824_192000-1-1024x768.jpg"> <!--Image Courtesy of Olio.com-->
+</center>
+<h1 class="text-center mb-4">Available Food: </h1>
+    
+  {% for food in  lists %}
+  <div class="card listing" >
+    <h3>{{food .Name}}</h3>
+    
+        <p>Quantity: {{ food.quantity }}</p>
+        <p>Location: {{ food.location }}</p>
+        
+
+    {% if food.status != "Reserved!" %}
+      <p class="status-normal"><strong> Status: {{ food . status }}</p><strong>
+    {% else %}
+      <p class="status"><strong>Status:  {{ food . status }}</p></strong>
+    {% endif %}
+
+    <p>Available_until: {{ food  .Available_until }}</p>
+
+    {% if food.status != "Reserved!" %}
+    <a href="{{ url_for('request_food', id=loop.index0 ) }}">
+        <button type="submit" class="btn btn-success">Request</button>
+    </a>
+    {% else %}
+      <button class="btn-disabled" disabled>Reserved</button>
+    {% endif %}
+  </div>
+  {% endfor %}
+  {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category,message in messages %}
+              <div class="flash-message {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+  {% endwith %}
+        
+   <a href="{{ url_for("add_food") }}" class= "btn-success">Add Food ?</a>        
+  
+   {% endblock content %}

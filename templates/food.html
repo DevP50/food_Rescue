@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block content %}
+<form method="POST" action="{{ url_for('add_food') }}">
+    {{ form.hidden_tag() }}
+
+    <div>
+      {{ form.Name.label }} {{ form.Name(class="form-control") }}
+      {% for err in form.Name.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}
+    </div>
+    <div>
+      {{ form.quantity.label }} {{ form.quantity(class="form-control") }}
+      {% for err in form.quantity.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}
+    </div>
+    <div>
+      {{ form.location.label }} {{ form.location(class="form-control") }}
+      {% for err in form.location.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}
+    </div>
+    <div>
+      {{ form.status.label }} {{ form.status(class="form-control") }}
+      {% for err in form.status.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}
+    </div>
+    <div>
+      {{ form.Available_until.label }} {{ form.Available_until(class="form-control") }}
+      {% for err in form.Available_until.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}
+    </div>
+    <div>{{ form.submit(class="btn btn-primary") }}</div>
+</form>
+{% endblock %}

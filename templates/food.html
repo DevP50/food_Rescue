@@ -1,7 +1,12 @@
 {% extends "layout.html" %}
 {% block content %}
-<form method="POST" action="{{ url_for('add_food') }}">
+<form method="POST" action="{{ url_for('add_food') }}" enctype="multipart/form-data">
     {{ form.hidden_tag() }}
+        <div>
+          {{ form.image.label }} {{ form.image(class="form-control") }}
+          {% for err in form.image.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}
+        </div>
+      
 
     <div>
       {{ form.Name.label }} {{ form.Name(class="form-control") }}
@@ -12,10 +17,6 @@
       {% for err in form.quantity.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}
     </div>
     <div>
-      {{ form.location.label }} {{ form.location(class="form-control") }}
-      {% for err in form.location.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}
-    </div>
-    <div>
       {{ form.status.label }} {{ form.status(class="form-control") }}
       {% for err in form.status.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}
     </div>
@@ -23,6 +24,16 @@
       {{ form.Available_until.label }} {{ form.Available_until(class="form-control") }}
       {% for err in form.Available_until.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}
     </div>
+     <label>Select Location:</label>
+    <div>
+     {{ form.location_name(id="location_name") }}
+    </div>
+
+      {{ form.latitude(id="lat") }}
+      {{ form.longitude(id="lng") }}
+
+  <div id="map" style="height: 300px;"></div>
+
     <div>{{ form.submit(class="btn btn-primary") }}</div>
 </form>
 {% endblock %}

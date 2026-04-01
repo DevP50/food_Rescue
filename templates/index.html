@@ -1,7 +1,12 @@
 {% extends "layout.html" %}
-   {% block content %}
+{% block content %}
    
-
+<nav class="navbar">
+  <div id="menu" align="middle">
+            <a href="/index.html">| HOME</a> |
+                       <a href="/about/contact_us.html">CONTACT</a> |
+            <a href="/about/index.html">ABOUT</a> |
+</nav>
 <center>
   <h1 class="text-center mb-4">Welcome To NoWasteAm</h1>
 </center>
@@ -9,28 +14,37 @@
 <h3 class="text-center mb-4"><strong>Share Food. Share Care</strong></h3>
 </center>
 <center>
-<img src="https://olioapp.com/en/wp-content/uploads/sites/1/2026/02/20240824_192000-1-1024x768.jpg"> <!--Image Courtesy of Olio.com-->
+ <img src="{{ url_for('static', filename='logo.jpg') }}" class="logo-img"> <!--Image Courtesy of Olio.com-->
 </center>
 <h1 class="text-center mb-4">Available Food: </h1>
     
   {% for food in  lists %}
+
   <div class="card listing" >
-    <h3>{{food .Name}}</h3>
-    
+    {% if food.image %}
+    <img src="{{ url_for('static', filename=food.image) }}" alt="Food Image" width="150" height="200">
+    {% endif %}
+    <h3>{{ food.Name }}</h3>
         <p>Quantity: {{ food.quantity }}</p>
         <p>Location: {{ food.location }}</p>
         
 
     {% if food.status != "Reserved!" %}
-      <p class="status-normal"><strong> Status: {{ food . status }}</p><strong>
+      <p class="status-normal"><strong>Status: {{ food.status }}</strong></p>
     {% else %}
-      <p class="status"><strong>Status:  {{ food . status }}</p></strong>
+      <p class="status"><strong>Status: {{ food.status }}</strong></p>
     {% endif %}
-
-    <p>Available_until: {{ food  .Available_until }}</p>
-
+  
+    <p>Available_until: {{ food.Available_until }}</p>
+    <h3>{{ food.food_name }}</h3>
+    <p>{{ food.distance }} km away</p>
+     {% for err in food.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}
+     {% for message in food.messages %}<div class="text-success">{{ message }}</div>{% endfor %}
+     {% if food.status != "Reserved!" %}
+      <p class="status-normal"><strong>Status: {{ food.status }}</strong></p>
+     {% endif %}
     {% if food.status != "Reserved!" %}
-    <a href="{{ url_for('request_food', id=loop.index0 ) }}">
+    <a href="{{ url_for('request_food', id=loop.index0) }}">
         <button type="submit" class="btn btn-success">Request</button>
     </a>
     {% else %}
@@ -45,7 +59,16 @@
             {% endfor %}
         {% endif %}
   {% endwith %}
-        
-   <a href="{{ url_for("add_food") }}" class= "btn-success">Add Food ?</a>        
-  
-   {% endblock content %}
+  {% for food in lists %}
+    {% if food.Role == "Restaurant" %} 
+     <a href="{{ url_for("add_food") }}" class= "btn-success">Add Food ?</a>       
+    {% endif %}
+ 
+    {% if food.Role != "Restaurant" %}
+      <a aria-disabled="true" class="btn-disabled" role="link"  >Add Food ?</a>
+
+    {% endif %}
+  {% endfor %}
+
+
+{% endblock content %}

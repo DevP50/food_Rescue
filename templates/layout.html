@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
    <script src="{{ url_for('static', filename='script.js') }}"></script>
    <title>{% block title %}NoWasteAm{% endblock %}</title>
@@ -22,8 +23,44 @@
             alerts.forEach(alert => alert.style.display = 'none');
         }, 5000);
       </script> <!--The script element allows authors to include dynamic script and data blocks in their documents-->
+       <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
+<script>
+var map = L.map('map').setView([4.05, 9.76], 13);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+var marker;
+
+map.on('click', function(e) {
+    var lat = e.latlng.lat;
+    var lng = e.latlng.lng;
+
+    // WTForms hidden fields
+    document.getElementById("lat").value = lat;
+    document.getElementById("lng").value = lng;
+
+    // Marker
+    if (marker) {
+        map.removeLayer(marker);
+    }
+
+    marker = L.marker([lat, lng]).addTo(map);
+
+    // Reverse geocoding
+    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+    .then(res => res.json())
+    .then(data => {
+        let place = data.display_name;
+
+        document.getElementById("location_name").value = place;
+
+        marker.bindPopup(place).openPopup();
+    });
+});
+</script>
     </div>  
-    <script src="https://cdn.jsdeliver.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

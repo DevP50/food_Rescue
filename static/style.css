@@ -7,9 +7,15 @@
     height:125px;
     margin-right:10px;
 }
+
+body{
+    margin: 0px;
+}
+
 .navbar{
     background:#2a9d4f;
     padding:50px;
+    margin: 0px;
     color:white;
     font-size:20px;
     font-weight:bold;
@@ -19,8 +25,23 @@
     text-decoration: none;
     padding: 0 15px;
     font-size: larger;
+    transition: all 0.3s ease;
 }
 
+.navbar a:hover{
+    color:white;
+    font-size: 28px;
+}
+
+.card.listing{
+    align-items: center;
+    align-content: center;
+    padding: 20px;
+    margin-bottom: 20px;
+    margin-left:30%;
+    margin-right:30%;
+    border: black solid;
+}
 
 
 /* CONTAINER */

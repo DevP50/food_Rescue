@@ -1,24 +1,17 @@
 {% extends "layout.html" %}
 {% block content %}
-<form method="POST" action="{{ url_for('confirm_food') }}">
+<form method="POST" action="{{ url_for('request_food',id=id) }}">
     {{ form.hidden_tag() }}
-        <div>
-          {{ form.Quantity_Ordered.label }} {{ form.Quantity_Ordered(class="form-control") }}
-          {% for err in form.Quantity_Ordered.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}
-        </div>
-        {% for food in  lists %}
-         <div class="card p-3 mb-3">
-          <p><strong>Name:</strong> {{ food.Name }}</p>
-          <p>Quantity_Available: {{ food.quantity }}</p>
-          <p>Location: {{ food.location }}</p>
-           {{ form.Quantity_Ordered.label }} {{ form.Quantity_Ordered(class="form-control") }}
-           {% for err in form.Quantity_Ordered.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}
-         </div>
-        {% endfor %}
-        <div>
+    <div>
+     {{ form.Quantity_Ordered.label }} {{ form.Quantity_Ordered(class="form-control") }}
+     {% for err in form.Quantity_Ordered.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}
+    </div>
+    <div>
+        {{form.food_id.label }} {{ form.food_id(id="food_id") }}
+             {% for err in form.food_id.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}
+    </div>
+    <div>
         {{ form.submit(class="btn btn-primary") }}
-        </div>
-
-    
+    </div>    
 </form>
 {% endblock %}

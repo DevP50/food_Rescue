@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Your Restaurant Dashboard, {{ current_user.username }}!</h1>
+        
+        <div class="actions">
+            <a href="{{ url_for('add_food') }}" class="btn">Add New Food</a>
+        </div>
+        
+        <h2>Your Food Items</h2>
+        {% if foods %}
+            <div class="food-list">
+                {% for food in foods %}
+                    <div class="food-item">
+                        <h3>{{ food.Name }}</h3>
+                        <p>Quantity Available: {{ food.Quantity_Available }}</p>
+                        <p>Status: {{ food.status }}</p>
+                        <p>Location: {{ food.location_name }}</p>
+                        <p>Available Until: {{ food.Available_until }}</p>
+                        
+                        <div class="food-actions">
+                            <a href="{{ url_for('update_food', id=food.id) }}" class="btn">Update</a>
+                            <form method="POST" action="{{ url_for('delete_food', id=food.id) }}" style="display: inline;">
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this food?')">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>You haven't added any food items yet. <a href="{{ url_for('add_food') }}">Add your first item!</a></p>
+        {% endif %}
+        
+    </div>
+</body>
+</html>

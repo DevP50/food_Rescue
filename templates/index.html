@@ -5,7 +5,15 @@
   <div id="menu" align="middle">
             <a href="/index.html">| HOME</a> |
                        <a href="/about/contact_us.html">CONTACT</a> |
-            <a href="/about/index.html">ABOUT</a> |
+            <a href="/about/index.html">ABOUT</a> |=
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('account') }}">ACCOUNT</a> |
+                <a href="{{ url_for('logout') }}">LOGOUT</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">LOGIN</a> |
+                <a href="{{ url_for('register') }}">REGISTER</a>
+            {% endif %}
+            <a href
 </nav>
 <center>
   <h1 class="text-center mb-4">Welcome To NoWasteAm</h1>
@@ -21,12 +29,10 @@
   {% for food in  lists %}
 
   <div class="card listing" >
-    {% if food.image %}
-    <img src="{{ url_for('static', filename=food.image) }}" alt="Food Image" width="150" height="200">
-    {% endif %}
+    <img src="{{url_for('static', filename='burger.jpg')}}" class="card-img-top" alt="Food Image" width="150" height="150">
     <h3>{{ food.Name }}</h3>
-        <p>Quantity: {{ food.quantity }}</p>
-        <p>Location: {{ food.location }}</p>
+        <p>Quantity: {{ food.Quantity_Available }}</p>
+        <p>Location: {{ food.location_name }}</p>
         
 
     {% if food.status != "Reserved!" %}
@@ -36,8 +42,8 @@
     {% endif %}
   
     <p>Available_until: {{ food.Available_until }}</p>
-    <h3>{{ food.food_name }}</h3>
-    <p>{{ food.distance }} km away</p>
+  <p>Food_Name: {{ food.food_name }}</p>
+    <p>Distance: {{ food.distance }} km away from you</p>
      {% for err in food.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}
      {% for message in food.messages %}<div class="text-success">{{ message }}</div>{% endfor %}
      {% if food.status != "Reserved!" %}

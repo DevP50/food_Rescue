@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Food</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Update Food Item</h1>
+        
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            
+            <div class="form-group">
+                {{ form.Name.label }}
+                {{ form.Name }}
+                {% if form.Name.errors %}
+                    {% for error in form.Name.errors %}
+                        <span class="error">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                {{ form.Quantity_Available.label }}
+                {{ form.Quantity_Available }}
+                {% if form.Quantity_Available.errors %}
+                    {% for error in form.Quantity_Available.errors %}
+                        <span class="error">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                {{ form.status.label }}
+                {{ form.status }}
+                {% if form.status.errors %}
+                    {% for error in form.Status.errors %}
+                        <span class="error">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            
+            {{ form.submit }}
+        </form>
+        
+        <a href="{{ url_for('restaurant') }}" class="btn">Back to Dashboard</a>
+    </div>
+</body>
+</html>

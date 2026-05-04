@@ -12,8 +12,8 @@ from sqlalchemy import func
 from config import admin_email
 from . import order_bp
 
-@order_bp.route("/home")
-def home():
+@order_bp.route("/home",methods=["GET", "POST"])
+def homes():
     foods = FoodPosts.query.filter(FoodPosts.Quantity_Available > 0).all()
     return render_template("index.html", foods=foods)
 
@@ -25,7 +25,7 @@ def request_food(id):
 
     if not food.is_available:
         flash("This food item is not available for ordering.", "danger")
-        return redirect(url_for('orders.home'))
+        return redirect(url_for('orders.homes'))
 
     if form.validate_on_submit():
 
@@ -74,6 +74,6 @@ def request_food(id):
         db.session.commit()
 
         flash("Request submitted successfully!", "success")
-        return redirect(url_for('orders.home'))
+        return redirect(url_for('orders.homes'))
 
     return render_template("confirm_request.html", food=food, id=id, form=form)

@@ -12,11 +12,11 @@ from appy.admin.routes import admin_bp
 from appy.users.routes import users
 from appy.orders.routes import order_bp
 from flask_migrate import Migrate
-
+from config import SECRET_KEY,BASE_DIR,SQLALCHEMY_DATABASE_URI
 app = Flask(__name__)
-app.config["SECRET_KEY"] = "af60146cca6088df799eb89e625f5cb6"
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{os.path.join(BASE_DIR, 'instance', 'site.db')}"
+app.config["SECRET_KEY"] = SECRET_KEY
+BASE_DIR = BASE_DIR
+app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
 from config import admin_email #Database secrets should be stored in environment variables or a config file, not hardcoded in the codebase for security reasons. This is just for demonstration purposes.
 db.init_app(app)#To avoid circular imports, we initialize the database and login manager here instead of in models.py
 login_manager.init_app(app)

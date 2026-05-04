@@ -1,6 +1,6 @@
 from datetime import datetime
 import time
-from flask import app
+
 from extensions import db,login_manager
 from appy.models.model import User, FoodPosts, OrderPosts
 from appy.forms import RegisterForm, LoginForm, FoodForm, RequestForm

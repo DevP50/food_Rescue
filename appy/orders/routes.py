@@ -29,13 +29,14 @@ def request_food(id):
 
     if form.validate_on_submit():
 
-        Quantity_Ordered = form.Quantity_Ordered.data
-        Quantity_Available = food.Quantity_Available #We need to convert the quantity available to an integer because it is stored as a string in the database and we need to compare it with the quantity ordered which is an integer    
-
-        if Quantity_Ordered is None: #If there is no value for Quantity ordered
+        raw_quantity = form.Quantity_Ordered.data
+        if raw_quantity is None:
             flash("Please enter a quantity to request.", "danger")
             return redirect(url_for('orders.request_food', id=id))
- 
+
+        Quantity_Ordered = int(raw_quantity)
+        Quantity_Available = int(food.Quantity_Available)  # normalize stored quantity to integer
+
 
         if Quantity_Ordered > Quantity_Available:
             flash("Requested quantity exceeds available quantity!", "danger")

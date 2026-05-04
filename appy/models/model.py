@@ -38,7 +38,7 @@ class OrderPosts(db.Model):
     )
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    quantity_ordered = db.Column(db.Integer, nullable=False)
+    quantity_ordered = db.Column(db.Integer, nullable=True)
     accepted_at = db.Column(db.DateTime, default=datetime.utcnow)
     order_status = db.Column(db.String(20), default="Pending", nullable=False)
     total_price = db.Column(db.Float, nullable=False)

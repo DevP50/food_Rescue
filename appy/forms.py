@@ -55,5 +55,5 @@ class LoginForm(FlaskForm):
     
 class RequestForm(FlaskForm):
     food_id = HiddenField("Food ID")
-    Quantity_Ordered = IntegerField("Quantity Ordered", validators=[DataRequired(), NumberRange(min=1,max=2)])
+    Quantity_Ordered = IntegerField("Quantity Ordered", validators=[DataRequired(), NumberRange(min=1)])
     submit = SubmitField("Request Food")

@@ -7,20 +7,21 @@
   <img src="{{ url_for('static',filename='background.jpg') }} " class="background-img">
   </div>
 
-<form method="POST" action="{{ url_for('login') }}">
+<form method="POST" action="{{ url_for('auth.login') }}">
       {{form.hidden_tag()}}
 
     <div>
       {{ form.email.label }} {{ form.email(class="form-control") }}
       {% for err in form.email.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}
     </div>
-
+      
     <div>
       {{ form.password.label }} {{ form.password(class="form-control") }}
       {% for err in form.password.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}
     </div>
+                         
     <div>{{ form.Remember() }} {{ form.Remember.label }}</div>
     <div>{{ form.submit(class="btn btn-primary") }}</div>
 </form>
-
+<a href="{{url_for('auth.register')}}">Need An Account?</a><--Register Here!
 {% endblock %}

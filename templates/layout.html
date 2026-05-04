@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
    <script src="{{ url_for('static', filename='script.js') }}"></script>
@@ -9,7 +11,7 @@
 
 </head>
 
-<body>
+ <body>
   
     
   
@@ -27,7 +29,7 @@
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-var map = L.map('map').setView([4.05, 9.76], 13);
+var map = L.map('map').setView([4.0303, 9.4604], 13);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
@@ -53,10 +55,11 @@ map.on('click', function(e) {
     .then(res => res.json())
     .then(data => {
         let place = data.display_name;
+        let shortPlace = place.split(',').slice(0, 2).map(part => part.trim()).join(',');
 
-        document.getElementById("location_name").value = place;
+        document.getElementById("location_name").value = shortPlace;
 
-        marker.bindPopup(place).openPopup();
+        marker.bindPopup(shortPlace).openPopup();
     });
 });
 </script>

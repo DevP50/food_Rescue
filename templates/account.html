@@ -1,4 +1,12 @@
 {% extends "layout.html" %}
 {% block content %}
- <h1>{{ current_user.username }}</h1>
+<div class="account-title" align="Middle">
+ <h1>{{current_user.username}}'s Account</h1>
+</div>
+ <h1>Username: {{ current_user.username }}</h1>
+ <h3>Phone: {{current_user.phone}}</h3>
+ <h3>Email: {{current_user.email}}</h3>
+  <form method="POST" action="{{ url_for('users.logout') }}">
+      <button type="submit" class="logout-button">LOGOUT</button>
+    </form>
 {% endblock content %}

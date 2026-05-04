@@ -1,17 +1,41 @@
 {% extends "layout.html" %}
 {% block content %}
-<form method="POST" action="{{ url_for('request_food',id=id) }}">
-    {{ form.hidden_tag() }}
-    <div>
-     {{ form.Quantity_Ordered.label }} {{ form.Quantity_Ordered(class="form-control") }}
-     {% for err in form.Quantity_Ordered.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}
+<div class="container mt-5">
+    <h2>Confirm Your Order</h2>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{ food.name }}</h5>
+            <p class="card-text" id="price">Unit Price: <strong>{{ food.price }} XAF</strong></p>
+            <p class="card-text">Available Quantity: {{ food.Quantity_Available }}</p>
+        </div>
     </div>
-    <div>
-        {{form.food_id.label }} {{ form.food_id(id="food_id") }}
-             {% for err in form.food_id.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}
-    </div>
-    <div>
-        {{ form.submit(class="btn btn-primary") }}
-    </div>    
-</form>
+    <form method="POST" action="{{ url_for('orders.home',id=id) }}" id="orderForm">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {{ form.Quantity_Ordered.label(class="form-label") }}
+            {{ form.Quantity_Ordered(class="form-control", id="quantity") }}
+            {% for err in form.Quantity_Ordered.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Total Price:</label>
+            <p id="totalPrice" class="fw-bold">0 XAF</p>
+        </div>
+        <div class="mb-3">
+            {{ form.food_id.label }} {{ form.food_id(id="food_id") }}
+            {% for err in form.food_id.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}
+        </div>
+        <div>
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+</div>
+
+<script>
+    document.getElementById('quantity').addEventListener('input', function() {//Gets the value of the quantity input field and calculates the total price based on the unit price of the food item. It then updates the total price displayed on the page in real-time as the user changes the quantity.    
+        const quantity = parseInt(this.value) || 0;
+        const price = document.getElementById('price').textContent.match(/(\d+)/)[0]; // Extracts the numeric value of the unit price from the text content of the price element.
+        const total = quantity * price;
+        document.getElementById('totalPrice').textContent = total + ' XAF';
+    });
+</script>
 {% endblock %}

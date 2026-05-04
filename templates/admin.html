@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Dashboard{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .admin-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .admin-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .admin-section h2 {
+            color: #2a9d4f;
+            border-bottom: 2px solid #2a9d4f;
+            padding-bottom: 10px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            border-left: 4px solid #2a9d4f;
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2a9d4f;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .data-table th, .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .data-table th {
+            background: #2a9d4f;
+            color: white;
+        }
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 12px;
+            margin: 2px;
+        }
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-pending { background: #ffc107; color: #000; }
+        .status-accepted { background: #28a745; color: white; }
+        .status-delivered { background: #007bff; color: white; }
+        .status-rejected { background: #dc3545; color: white; }
+        .status-paid { background: #17a2b8; color: white; }
+        .form-inline {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .form-inline input, .form-inline select {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        @media (max-width: 768px) {
+            .admin-container { padding: 10px; }
+            .data-table { font-size: 14px; }
+            .data-table th, .data-table td { padding: 8px; }
+            .form-inline { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <h1>Admin Dashboard</h1>
+
+        <!-- Statistics Overview -->
+        <div class="admin-section">
+            <h2>Overview</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">{{ users|length }}</div>
+                    <div>Total Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ restaurants|length }}</div>
+                    <div>Restaurants</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ riders|length }}</div>
+                    <div>Riders</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ food_posts|length }}</div>
+                    <div>Food Posts</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ orders|length }}</div>
+                    <div>Total Orders</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Management -->
+        <div class="admin-section">
+            <h2>Users Management</h2>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Phone</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.role }}</td>
+                        <td>{{ user.phone or 'N/A' }}</td>
+                        <td>
+                            <form method="post" action="{{ url_for('admin.admin_delete_user', id=user.id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-small" style="background:#dc3545;" onclick="return confirm('Delete this user?')">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Restaurants Management -->
+        <div class="admin-section">
+            <h2>Restaurants Management</h2>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Restaurant Name</th>
+                        <th>Location</th>
+                        <th>Phone</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for restaurant in restaurants %}
+                    <tr>
+                        <td>{{ restaurant.id }}</td>
+                        <td>{{ restaurant.username }}</td>
+                        <td>{{ restaurant.restaurant_name or 'N/A' }}</td>
+                        <td>{{ restaurant.restaurant_location or 'N/A' }}</td>
+                        <td>{{ restaurant.phone or 'N/A' }}</td>
+                        <td>
+                            <form method="post" action="{{ url_for('admin.admin_delete_user', id=restaurant.id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-small" style="background:#dc3545;" onclick="return confirm('Delete this restaurant?')">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Food Posts Management -->
+        <div class="admin-section">
+            <h2>Food Posts Management</h2>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Food Name</th>
+                        <th>Restaurant</th>
+                        <th>Quantity</th>
+                        <th>Status</th>
+                        <th>Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for post in food_posts %}
+                    <tr>
+                        <td>{{ post.id }}</td>
+                        <td>{{ post.name }}</td>
+                        <td>{{ post.restaurant.username if post.restaurant else 'Unknown' }}</td>
+                        <td>{{ post.Quantity_Available }}</td>
+                        <td>{{ post.status }}</td>
+                        <td>XAF{{ "%.2f"|format(post.price) }}</td>
+                        <td>
+                            <form method="post" action="{{ url_for('admin.admin_delete_post', id=post.id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-small" style="background:#dc3545;" onclick="return confirm('Delete this food post?')">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Orders Management -->
+        <div class="admin-section">
+            <h2>Orders Management</h2>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Customer</th>
+                        <th>Food</th>
+                        <th>Quantity</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>{{ order.id }}</td>
+                        <td>{{ order.order.username if order.order else 'Unknown' }}</td>
+                        <td>{{ order.food.name if order.food else 'Unknown' }}</td>
+                        <td>{{ order.quantity_ordered }}</td>
+                        <td>
+                            <span class="status-badge status-{{ order.order_status.lower() }}">
+                                {{ order.order_status }}
+                            </span>
+                        </td>
+                        <td>{{ order.created_at.strftime('%Y-%m-%d %H:%M') if order.created_at else 'N/A' }}</td>
+                        <td>
+                            <form method="post" action="{{ url_for('admin.admin_update_order', id=order.id) }}" style="display:inline;">
+                                <select name="status" onchange="this.form.submit()"> <!--This basically says that when the button is clicked- -->
+                                    <option value="Pending" {% if order.order_status == 'Pending' %}selected{% endif %}>Pending</option>
+                                    <option value="Accepted" {% if order.order_status == 'Accepted' %}selected{% endif %}>Accepted</option>
+                                    <option value="Delivered" {% if order.order_status == 'Delivered' %}selected{% endif %}>Delivered</option>
+                                    <option value="Rejected" {% if order.order_status == 'Rejected' %}selected{% endif %}>Rejected</option>
+                                    <option value="Paid" {% if order.order_status == 'Paid' %}selected{% endif %}>Paid</option>
+                                </select>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Riders Management -->
+        <div class="admin-section">
+            <h2>Riders Management</h2>
+            <div class="form-inline">
+                <h3>Add New Rider</h3>
+                <form method="post" action="{{ url_for('admin.admin_add_rider') }}">
+                    <input type="text" name="username" placeholder="Rider Name" required>
+                    <input type="email" name="email" placeholder="Email" required>
+                    <input type="text" name="phone" placeholder="Phone (optional)">
+                    <button type="submit" class="btn">Add Rider</button>
+                </form>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rider in riders %}
+                    <tr>
+                        <td>{{ rider.id }}</td>
+                        <td>{{ rider.username }}</td>
+                        <td>{{ rider.email }}</td>
+                        <td>{{ rider.phone or 'N/A' }}</td>
+                        <td>
+                            <form method="post" action="{{ url_for('admin.admin_delete_user', id=rider.id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-small" style="background:#dc3545;" onclick="return confirm('Delete this rider?')">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

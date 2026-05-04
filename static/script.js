@@ -32,7 +32,7 @@ navigator.geolocation.getCurrentPosition (
         } 
 );
 }else{
-    console.log("Geolocation")
+    console.log("Geolocation");
 }
 
 

@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
-<form method="POST" action="{{ url_for('add_food') }}" enctype="multipart/form-data">
-    {{ form.hidden_tag() }}
+<form method="POST" action="{{ url_for('restaurant.add_food') }}" enctype="multipart/form-data" accept=".jpg,.jpeg,.png">
+           {{ form.hidden_tag() }}
         <div>
           {{ form.image.label }} {{ form.image(class="form-control") }}
           {% for err in form.image.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}
@@ -14,26 +14,29 @@
     </div>
     <div>
       {{ form.Quantity_Available.label }} {{ form.Quantity_Available(class="form-control") }}
-      {% for err in form.quantity.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}
+      {% for err in form.Quantity_Available.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}
     </div>
     <div>
       {{ form.status.label }} {{ form.status(class="form-control") }}
       {% for err in form.status.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}
     </div>
     <div>
-      {{ form.Available_until.label }} {{ form.Available_until(class="form-control") }}
-      {% for err in form.Available_until.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}
+      {{ form.price.label }} {{ form.price(class="form-control") }}
+      {% for err in form.price.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}
     </div>
      <label>Select Location:</label>
     <div>
-     {{ form.location_name(id="location_name") }}
+     {{ form.location_name(id="location_name", class_="form-control") }}
+     <small class="form-text">You can type the location by hand, or click the map to fill it automatically.</small>
     </div>
-
-      {{ form.latitude(id="lat") }}
-      {{ form.longitude(id="lng") }}
-
+    <div>
+      {{ form.phone.label }} {{ form.phone(class="form-control") }}
+      {% for err in form.phone.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}
+    </div>
+ 
+     
   <div id="map" style="height: 300px;"></div>
 
-    <div>{{ form.submit(class="btn btn-primary") }}</div>
+      <button type="submit" class="btn btn-primary mt-3">Add Food</button>
 </form>
 {% endblock %}

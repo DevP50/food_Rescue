@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ user.username }} - Profile{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-card">
+        <h1>User Profile</h1>
+        
+        <div class="profile-info">
+            <div class="info-item">
+                <label class="label">Name:</label>
+                <p class="value">{{ user.username }}</p>
+            </div>
+            
+            <div class="info-item">
+                <label class="label">Phone Number:</label>
+                <p class="value">{{ user.phone if user.phone else 'Not provided' }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .profile-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 60vh;
+        padding: 20px;
+    }
+    
+    .profile-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        max-width: 500px;
+        width: 100%;
+    }
+    
+    .profile-card h1 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #333;
+    }
+    
+    .profile-info {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .info-item {
+        border-bottom: 1px solid #eee;
+        padding-bottom: 15px;
+    }
+    
+    .info-item:last-child {
+        border-bottom: none;
+    }
+    
+    .label {
+        font-weight: bold;
+        color: #555;
+        display: block;
+        margin-bottom: 5px;
+    }
+    
+    .value {
+        color: #333;
+        font-size: 16px;
+        margin: 0;
+    }
+</style>
+{% endblock %}

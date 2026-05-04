@@ -1,20 +1,31 @@
 {% extends "layout.html" %}
 {% block content %}
    
-<nav class="navbar">
-  <div id="menu" align="middle">
+  <nav class="navbar">
+    <div id="menu">
+       <img src="{{url_for('static', filename='logo.jpg')}}" class="card-img-top" alt="Food Image" width="1500" height="750">
+    </div> 
+    <div id="menu" align="middle">
             <a href="/index.html">| HOME</a> |
                        <a href="/about/contact_us.html">CONTACT</a> |
-            <a href="/about/index.html">ABOUT</a> |=
-            {% if current_user.is_authenticated %}
-                <a href="{{ url_for('account') }}">ACCOUNT</a> |
-                <a href="{{ url_for('logout') }}">LOGOUT</a>
-            {% else %}
-                <a href="{{ url_for('login') }}">LOGIN</a> |
-                <a href="{{ url_for('register') }}">REGISTER</a>
-            {% endif %}
-            <a href
-</nav>
+            <a href="/about/index.html">ABOUT</a> |
+              {% if current_user.is_authenticated %}
+                <a href="{{ url_for('users.account') }}">ACCOUNT</a> |
+                {% if current_user.email == "nanagilberto@gmail.com" %}
+                  <a href="{{ url_for('admin.admin_') }}">ADMIN</a> |
+                {% endif %}
+                <a href="{{ url_for('users.logout') }}">LOGOUT</a>
+              {% else %}
+                <a href="{{ url_for('auth.login') }}">LOGIN</a> |
+                <a href="{{ url_for('auth.register') }}">REGISTER</a>
+              {% endif %}
+              {% if current_user.is_authenticated %}
+                {% if current_user.role == "Restaurant" %}
+                  <a href="{{ url_for('restaurant.dashboard') }}">Restaurant</a>
+                {% else %}
+                  <a href="{{ url_for('restaurant.dashboard') }}" class="btn-disabled" aria-disabled="true">Restaurant</a>
+                {% endif %}
+              {% endif %}
 <center>
   <h1 class="text-center mb-4">Welcome To NoWasteAm</h1>
 </center>
@@ -22,41 +33,40 @@
 <h3 class="text-center mb-4"><strong>Share Food. Share Care</strong></h3>
 </center>
 <center>
- <img src="{{ url_for('static', filename='logo.jpg') }}" class="logo-img"> <!--Image Courtesy of Olio.com-->
+      <img src="{{url_for('static', filename='icon.jpg') }}" class="icon-img" width="200" height="200">
 </center>
 <h1 class="text-center mb-4">Available Food: </h1>
     
-  {% for food in  lists %}
-
-  <div class="card listing" >
+  {% for food in foods  %}
+   <div class="card listing" >
     <img src="{{url_for('static', filename='burger.jpg')}}" class="card-img-top" alt="Food Image" width="150" height="150">
-    <h3>{{ food.Name }}</h3>
+    <center>
+    <h1 class="card-title" style="background-color: black;">{{ food.name }}</h5>
+     <h2 class="card-subtitle mb-2 text-muted">By {{ food.restaurant_name }}</h2>
+    </center>
         <p>Quantity: {{ food.Quantity_Available }}</p>
         <p>Location: {{ food.location_name }}</p>
+        <p>Price: {{ food.price }} XAF</p>
+        <p>Phone: {{ food.phone }}</p>
         
+     
 
     {% if food.status != "Reserved!" %}
       <p class="status-normal"><strong>Status: {{ food.status }}</strong></p>
     {% else %}
       <p class="status"><strong>Status: {{ food.status }}</strong></p>
     {% endif %}
-  
-    <p>Available_until: {{ food.Available_until }}</p>
-  <p>Food_Name: {{ food.food_name }}</p>
-    <p>Distance: {{ food.distance }} km away from you</p>
-     {% for err in food.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}
-     {% for message in food.messages %}<div class="text-success">{{ message }}</div>{% endfor %}
-     {% if food.status != "Reserved!" %}
-      <p class="status-normal"><strong>Status: {{ food.status }}</strong></p>
-     {% endif %}
-    {% if food.status != "Reserved!" %}
-    <a href="{{ url_for('request_food', id=loop.index0) }}">
+    {% if food.status != "Pending..." or food.status != "Accepted!" or food.status != "Sold Out!" %}
+     <form method="post" action="{{ url_for('orders.request_food', id=food.id) }}">
         <button type="submit" class="btn btn-success">Request</button>
-    </a>
+     </form>
     {% else %}
       <button class="btn-disabled" disabled>Reserved</button>
     {% endif %}
-  </div>
+    </div>
+    {% if food.Quantity_Available == 0 %}
+      <button class="btn-disabled" disabled>Sold Out</button>
+    {% endif %}
   {% endfor %}
   {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -67,7 +77,7 @@
   {% endwith %}
   {% for food in lists %}
     {% if food.Role == "Restaurant" %} 
-     <a href="{{ url_for("add_food") }}" class= "btn-success">Add Food ?</a>       
+     <a href="{{ url_for("restaurant.add_food") }}" class= "btn-success">Add Food ?</a>       
     {% endif %}
  
     {% if food.Role != "Restaurant" %}
@@ -76,5 +86,4 @@
     {% endif %}
   {% endfor %}
 
-
-{% endblock content %}
+{% endblock content %} 

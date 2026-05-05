@@ -7,7 +7,8 @@ from flask import Flask, abort, render_template, request, url_for, redirect, fla
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import joinedload
-from config import admin_email
+import os
+admin_email = os.getenv("ADMIN_EMAIL")
 from . import users
 
 

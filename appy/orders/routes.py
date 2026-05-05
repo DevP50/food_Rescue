@@ -9,7 +9,8 @@ from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import joinedload
 from sqlalchemy import func
-from config import admin_email
+import os
+admin_email = os.getenv("ADMIN_EMAIL")
 from . import order_bp
 
 @order_bp.route("/home",methods=["GET", "POST"])

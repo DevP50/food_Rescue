@@ -31,7 +31,7 @@ logging.basicConfig(level=logging.INFO)
 app.logger.setLevel(logging.INFO)
 migrate = Migrate(app, db)
 
-app.register_blueprint(auth_bp)
+app.register_blueprint(auth_bp)#Register the Created blueprint for each package
 app.register_blueprint(restauraunt_bp)
 app.register_blueprint(admin_bp)
 app.register_blueprint(users)
@@ -46,7 +46,8 @@ def add_header(response):
     return response
 
 @app.errorhandler(404)
-def page_not_found(e):
+def page_not_found(e):#Custom Error Pages (The app calls the error_handler method and the error code is pass as an argument and executes the function
+
     return render_template('404.html'), 404
 
 @app.errorhandler(500)

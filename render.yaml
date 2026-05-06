@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: nowasteam
+    runtime: python3
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn run:app
+    envVars:
+      - key: FLASK_DEBUG
+        value: False
+      - key: SECRET_KEY
+        fromSecret: secret-key
+      - key: DATABASE_URL
+        fromSecret: database-url
+      - key: ADMIN_EMAIL
+        fromSecret: admin-email

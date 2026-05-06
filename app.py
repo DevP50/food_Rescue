@@ -19,39 +19,38 @@ SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")  # Render uses DATABASE_URL
 BASE_DIR = os.getcwd()
 admin_email = os.getenv("ADMIN_EMAIL")
 app = Flask(__name__)
-def create_app():
-  app = Flask(__name__)
-  app.config["SECRET_KEY"] = SECRET_KEY
-  app.config["BASE_DIR"] = BASE_DIR
-  app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
-  app.config["WTF_CSRF_ENABLED"] = True
+
+app.config["SECRET_KEY"] = SECRET_KEY
+app.config["BASE_DIR"] = BASE_DIR
+app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
+app.config["WTF_CSRF_ENABLED"] = True
  
   
  #Database secrets should be stored in environment variables or a config file, not hardcoded in the codebase for security reasons. This is just for demonstration purposes.
-  db.init_app(app)#To avoid circular imports, we initialize the database and login manager here instead of in models.py
-  login_manager.init_app(app)#This tells Flask-Login which view to redirect to when a user tries to access a protected route without being logged in. It also sets the category for the flash message that appears when a user is redirected to the login page.
-  login_manager.login_view = 'login'
-  login_manager.login_message_category = 'info'
+db.init_app(app)#To avoid circular imports, we initialize the database and login manager here instead of in models.py
+login_manager.init_app(app)#This tells Flask-Login which view to redirect to when a user tries to access a protected route without being logged in. It also sets the category for the flash message that appears when a user is redirected to the login page.
+login_manager.login_view = 'login'
+login_manager.login_message_category = 'info'
 #Every class is a table in the database, and every object of the class is a column in the table.
 # Removed in-memory lists and orders - now using database models
 # Setup logging
-  logging.basicConfig(level=logging.INFO)
-  app.logger.setLevel(logging.INFO)
-  migrate = Migrate(app, db)
+logging.basicConfig(level=logging.INFO)
+app.logger.setLevel(logging.INFO)
+migrate = Migrate(app, db)
 
-  app.register_blueprint(auth_bp)#Register the Created blueprint for each package
-  app.register_blueprint(restauraunt_bp)
-  app.register_blueprint(admin_bp)
-  app.register_blueprint(users)
-  app.register_blueprint(order_bp ,url_prefix="/orders")
-  if __name__ == "__main__":
+app.register_blueprint(auth_bp)#Register the Created blueprint for each package
+app.register_blueprint(restauraunt_bp)
+app.register_blueprint(admin_bp)
+app.register_blueprint(users)
+app.register_blueprint(order_bp ,url_prefix="/orders")
+  
+if __name__ == "__main__":
     with app.app_context():
         db.create_all()
      
     app.run(debug=os.getenv("FLASK_DEBUG", "False").lower() == "true")
-  return app
-
-
+  
+  
 @app.after_request
 def add_header(response):
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'

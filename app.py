@@ -13,7 +13,7 @@ from appy.admin.routes import admin_bp
 from appy.users.routes import users
 from appy.orders.routes import order_bp
 from flask_migrate import Migrate
-from config import SECRET_KEY,BASE_DIR,SQLALCHEMY_DATABASE_URI
+from venv import SECRET_KEY,BASE_DIR,SQLALCHEMY_DATABASE_URI
 app = Flask(__name__)
 app.config["SECRET_KEY"] = SECRET_KEY
 BASE_DIR = BASE_DIR

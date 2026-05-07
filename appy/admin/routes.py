@@ -76,7 +76,7 @@ def admin_delete_post(id):
      db.session.delete(food)
      db.session.commit()
      flash('Restaurant post deleted successfully.', 'success')
-     return redirect(url_for('admin_'))
+     return redirect(url_for('aadmin_'))
     return render_template("admin.html")
 
 @admin_bp.route('/admin/order/update/<int:id>', methods=['POST'])

@@ -6,6 +6,11 @@
  <h1>Username: {{ current_user.username }}</h1>
  <h3>Phone: {{current_user.phone}}</h3>
  <h3>Email: {{current_user.email}}</h3>
+ 
+ <div class="mt-3">
+   <a href="{{ url_for('users.UserOrders', id=current_user.id) }}" class="btn btn-primary">View My Orders</a>
+ </div>
+
   <form method="POST" action="{{ url_for('users.logout') }}">
       <button type="submit" class="logout-button">LOGOUT</button>
     </form>

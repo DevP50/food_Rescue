@@ -19,5 +19,4 @@ A food rescue platform that connects people to surplus food from restaurants and
 python app.py
 
 
-## Errors in code
-- The Add button in the add route does not work is not responding
+

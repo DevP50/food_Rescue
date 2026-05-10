@@ -21,7 +21,7 @@ def admin_required():
 def admin_():
     admin_required()
 
-    users = User.query.filter(User.role == 'User').all()
+    users = User.query.filter(User.role == 'User').all()#Get all the users in the User model with role User
     restaurants = User.query.filter(User.role == 'Restaurant').all()
     riders = User.query.filter(User.role == 'Food Delivery').all()
     food_posts = FoodPosts.query.options(joinedload(FoodPosts.restaurant)).all()

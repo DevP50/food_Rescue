@@ -33,7 +33,7 @@ def UserOrders(id):
     if current_user.id != id:
         abort(403)
     user = User.query.get_or_404(id)#This queries the database and gets the corresponding user_id
-    order = OrderPosts.query.filter_by(order_id=id).all() #this queries the order tsble and gets all the orders of a specific user
+    order = OrderPosts.query.filter_by(order_id=id).all() #this queries the order table and gets all the orders of a specific user
     return render_template("my_order.html",user=user,order=order,title="My Orders" )
 
 @users.route("/logout")

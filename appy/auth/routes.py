@@ -48,12 +48,6 @@ def register():
     
   
 
-@auth_bp.route("/home")
-def home():
-    from appy.models.model import FoodPosts
-    foods = FoodPosts.query.all()
-    
-    return render_template("index.html", foods=foods)   
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():

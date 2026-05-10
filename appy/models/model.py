@@ -43,7 +43,7 @@ class OrderPosts(db.Model):
     order_status = db.Column(db.String(20), default="Pending", nullable=False)
     total_price = db.Column(db.Float, nullable=False)
    
-class FoodPosts(db.Model):
+class FoodPosts (db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     image = db.Column(db.String(100), nullable=True, default="default.jpg")

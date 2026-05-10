@@ -75,6 +75,6 @@ def request_food(id):
         db.session.commit()
 
         flash("Request submitted successfully!", "success")
-        return redirect(url_for('orders.homes'))
+        return redirect(url_for('users.UserOrders'))
 
     return render_template("confirm_request.html", food=food, id=id, form=form)

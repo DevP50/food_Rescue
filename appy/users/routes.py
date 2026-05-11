@@ -27,7 +27,7 @@ def user_profile(id):
     return render_template("user_profile.html", user=user,title="Profile")
 
 
-@users.route("/users/my_orders/<int:id>")
+@users.route("/users/my_orders/<int:id>",methods=["GET","POST"])
 @login_required
 def UserOrders(id):
     if current_user.id != id:

@@ -1,4 +1,4 @@
-rom datetime import datetime
+from datetime import datetime
 import time
 from extensions import db,login_manager
 from appy.models.model import User, FoodPosts, OrderPosts

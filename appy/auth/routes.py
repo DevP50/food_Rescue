@@ -61,7 +61,7 @@ def login():
         # Check if user exists and password matches
         if user and check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.Remember.data)
-            return redirect(url_for('auth.home'))
+            return redirect(url_for('orders.homes'))
         else:
             flash("Invalid email or password.", "danger")   
     else:

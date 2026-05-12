@@ -6,7 +6,7 @@
         <img src="{{ url_for('static', filename='logo.jpg') }}" class="logo-img">
      </center>
 
-    <form method="POST" action="{{ url_for('auth.register') }}">
+    <form method="POST" action="{{ url_for('auth.login') }}">
       {{ form.hidden_tag() }}
 
       <div>

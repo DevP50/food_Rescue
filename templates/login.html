@@ -1,12 +1,8 @@
 {% extends "layout.html" %}
 {% block content %}
 <center>
-    <img src="{{url_for('static',filename='logo.jpg')}}" class="logo.jpg">
+<img src="{{url_for('static',filename='logo.jpg')}}" width="360" height="360" alt="Logo Image">
 </center>
-<<<<<<< HEAD
-  
-=======
->>>>>>> 7308b6371a9922776bc9c8de48a2eb8ec4911ed2
 <form method="POST" action="{{ url_for('auth.login') }}">
       {{form.hidden_tag()}}
 

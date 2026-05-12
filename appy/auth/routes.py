@@ -5,8 +5,7 @@ from extensions import db
 from appy.models.model import User
 from flask_login import login_user, logout_user, current_user, login_required
 from . import auth_bp
-@
-auth_bp.route("/")
+@auth_bp.route("/")
 @auth_bp.route("/welcome",methods=["GET", "POST"])
 def welcome():
     return render_template("welcome.html", title="Welcome")

@@ -9,7 +9,11 @@
             <p class="card-text">Available Quantity: {{ food.Quantity_Available }}</p>
         </div>
     </div>
+<<<<<<< HEAD
     <form method="POST" action="{{ url_for('users. UserOrders', id=id) }}" id="orderForm">
+=======
+    <form method="POST" action="{{ url_for('users.UserOrders',id=id) }}" id="orderForm">
+>>>>>>> b75938ad21bc6984f5c278def45b47738a6c2a23
         {{ form.hidden_tag() }}
         <div class="mb-3">
             {{ form.Quantity_Ordered.label(class="form-label") }}

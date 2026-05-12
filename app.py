@@ -17,7 +17,10 @@ import os
 SECRET_KEY = os.getenv("SECRET_KEY")
 SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")  # Render uses DATABASE_URL
 BASE_DIR = os.getcwd()
+<<<<<<< HEAD
 admin_email = os.getenv("ADMIN_EMAIL")
+=======
+>>>>>>> b75938ad21bc6984f5c278def45b47738a6c2a23
 app = Flask(__name__)
 
 app.config["SECRET_KEY"] = SECRET_KEY

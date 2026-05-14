@@ -60,6 +60,9 @@
      <form method="post" action="{{ url_for('orders.request_food', id=food.id) }}">
         <button type="submit" class="btn btn-success">Request</button>
      </form>
+      <a href="https://wa.me/food.phone">
+        <button type="button" class="btn btn-primary"><link rel="preload" as="image" href="https://static.dubizzle.com/frontend-web/static-resources/assets/images/whatsapp2.svg">Whatsapp</button>
+      </a>
     {% else %}
       <button class="btn-disabled" disabled>Reserved</button>
     {% endif %}

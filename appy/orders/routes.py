@@ -42,7 +42,7 @@ def request_food(id):
         if Quantity_Ordered > Quantity_Available:
             flash("Requested quantity exceeds available quantity!", "danger")
             return redirect(url_for('orders.request_food', id=id))
-         is_valid, message = check_order_limit(current_user.id, food.restaurant_id, Quantity_Ordered)
+        is_valid, message = check_order_limit(current_user.id, food.restaurant_id, Quantity_Ordered)
         if not is_valid:
             flash(message, "danger")
             return redirect(url_for('orders.request_food', id=id))

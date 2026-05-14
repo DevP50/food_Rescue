@@ -42,23 +42,11 @@ def request_food(id):
         if Quantity_Ordered > Quantity_Available:
             flash("Requested quantity exceeds available quantity!", "danger")
             return redirect(url_for('orders.request_food', id=id))
-
-        today = datetime.utcnow().date()
-        user_orders_today = OrderPosts.query.options(joinedload(OrderPosts.food)).filter(
-            OrderPosts.order_id == current_user.id,
-            func.date(OrderPosts.created_at) == today
-        ).all()
-
-        total_portions_today = sum(o.quantity_ordered for o in user_orders_today)
-        restaurants_today = {o.food.restaurant_id for o in user_orders_today if o.food}
-        if total_portions_today + Quantity_Ordered > 3:
-            flash("You can only request up to 3 portions per day.", "danger")
+         is_valid, message = check_order_limit(current_user.id, food.restaurant_id, Quantity_Ordered)
+        if not is_valid:
+            flash(message, "danger")
             return redirect(url_for('orders.request_food', id=id))
-
-        if food.restaurant_id not in restaurants_today and len(restaurants_today) >= 2:
-            flash("You can only order from a maximum of 2 different restaurants per day.", "danger")
-            return redirect(url_for('orders.request_food', id=id))
-
+            
         new_order = OrderPosts(
             order_id=current_user.id,
             food_id=food.id,

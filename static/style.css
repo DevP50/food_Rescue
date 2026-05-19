@@ -165,4 +165,13 @@ form button:hover {
     background-image: url(background.jpg);
 }
 
-
+body{
+    background-color:#fff8e1;
+    color: black;
+}
+@media(prefers-color-scheme: dark){
+    body{
+    background-color: black;
+    color: white;                           
+}
+}

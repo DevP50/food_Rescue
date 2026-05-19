@@ -1,92 +1,605 @@
 {% extends "layout.html" %}
 {% block content %}
-   
-  <nav class="navbar">
-    <div id="menu">
-       <img src="{{url_for('static', filename='logo.jpg')}}" class="card-img-top" alt="Food Image" width="1500" height="750">
-    </div> 
-    <div id="menu" align="middle">
-            <a href="/index.html">| HOME</a> |
-                       <a href="/about/contact_us.html">CONTACT US</a> |
-            <a href="/about/index.html">ABOUT</a> |
-              {% if current_user.is_authenticated %}
-                <a href="{{ url_for('users.account') }}">ACCOUNT</a> |
-                {% if current_user.email == "nanagilberto@gmail.com" %}
-                  <a href="{{ url_for('admin.admin_') }}">ADMIN</a> |
-                {% endif %}
-                <a href="{{ url_for('users.logout') }}">LOGOUT</a>
-              {% else %}
-                <a href="{{ url_for('auth.login') }}">LOGIN</a> |
-                <a href="{{ url_for('auth.register') }}">REGISTER</a>
-              {% endif %}
-              {% if current_user.is_authenticated %}
-                {% if current_user.role == "Restaurant" %}
-                  <a href="{{ url_for('restaurant.dashboard') }}">Restaurant</a>
-                {% else %}
-                  <a href="{{ url_for('restaurant.dashboard') }}" class="btn-disabled" aria-disabled="true">Restaurant</a>
-                {% endif %}
-              {% endif %}
-<center>
-  <h1 class="text-center mb-4">Welcome To NoWasteAm</h1>
-</center>
-<center>
-<h3 class="text-center mb-4"><strong>Share Food. Share Care</strong></h3>
-</center>
-<center>
-      <img src="{{url_for('static', filename='icon.jpg') }}" class="icon-img" width="200" height="200">
-</center>
-<h1 class="text-center mb-4">Available Food: </h1>
-    
-  {% for food in foods  %}
-   <div class="card listing" >
-    <img src="{{url_for('static', filename='burger.jpg')}}" class="card-img-top" alt="Food Image" width="150" height="150">
-    <center>
-    <h1 class="card-title" style="background-color: black;">{{ food.name }}</h5>
-     <h2 class="card-subtitle mb-2 text-muted">By {{ food.restaurant_name }}</h2>
-    </center>
-        <p>Quantity: {{ food.Quantity_Available }}</p>
-        <p>Location: {{ food.location_name }}</p>
-        <p>Price: {{ food.price }} XAF</p>
-        <p>Phone: {{ food.phone }}</p>
-        
-     
 
-    {% if food.status != "Reserved!" %}
-      <p class="status-normal"><strong>Status: {{ food.status }}</strong></p>
-    {% else %}
-      <p class="status"><strong>Status: {{ food.status }}</strong></p>
-    {% endif %}
-    {% if food.status != "Pending..." or food.status != "Accepted!" or food.status != "Sold Out!" %}
-     <form method="post" action="{{ url_for('orders.request_food', id=food.id) }}">
-        <button type="submit" class="btn btn-success">Request</button>
-     </form>
-      <a href="https://wa.me/food.phone">
-        <button type="button" class="btn btn-primary"><link rel="preload" as="image" href="https://static.dubizzle.com/frontend-web/static-resources/assets/images/whatsapp2.svg">Whatsapp</button>
-      </a>
-    {% else %}
-      <button class="btn-disabled" disabled>Reserved</button>
-    {% endif %}
-    </div>
-    {% if food.Quantity_Available == 0 %}
-      <button class="btn-disabled" disabled>Sold Out</button>
-    {% endif %}
-  {% endfor %}
-  {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category,message in messages %}
-              <div class="flash-message {{ category }}">{{ message }}</div>
-            {% endfor %}
+<style>
+  /* ── Reset & base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black:  #0d0d0d;
+    --dark:   #141414;
+    --card:   #1a1a1a;
+    --border: #2a2a2a;
+    --green:  #4caf50;
+    --green2: #2e7d32;
+    --yellow: #f5c518;
+    --red:    #e53935;
+    --white:  #f5f5f0;
+    --muted:  #6b7b6b;
+  }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  .nwa-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(13,13,13,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 16px;
+  }
+  .nwa-nav-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    gap: 12px;
+  }
+  .nwa-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+  .nwa-logo img {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+  .nwa-logo-text {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--white);
+    letter-spacing: -0.02em;
+  }
+  .nwa-logo-text span { color: var(--green); }
+
+  /* Hamburger for mobile */
+  .nwa-hamburger {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+  }
+  .nwa-hamburger span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--white);
+    border-radius: 2px;
+    transition: all 0.3s;
+  }
+
+  /* Nav links — hidden on mobile, shown in dropdown */
+  .nwa-nav-links {
+    display: none;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    right: 0;
+    background: var(--dark);
+    border-bottom: 1px solid var(--border);
+    flex-direction: column;
+    padding: 12px 16px;
+    gap: 4px;
+  }
+  .nwa-nav-links.open { display: flex; }
+  .nwa-nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 10px 12px;
+    border-radius: 4px;
+    transition: background 0.2s, color 0.2s;
+  }
+  .nwa-nav-links a:hover { background: rgba(76,175,80,0.08); color: var(--white); }
+  .nwa-nav-links .nav-divider { height: 1px; background: var(--border); margin: 6px 0; }
+  .nwa-nav-links .nav-highlight {
+    color: var(--green);
+    font-weight: 700;
+  }
+  .btn-disabled-nav {
+    color: var(--muted) !important;
+    opacity: 0.4;
+    cursor: not-allowed !important;
+    pointer-events: none;
+  }
+
+  /* Desktop nav */
+  @media (min-width: 768px) {
+    .nwa-hamburger { display: none; }
+    .nwa-nav-links {
+      display: flex !important;
+      position: static;
+      background: none;
+      border: none;
+      flex-direction: row;
+      padding: 0;
+      gap: 2px;
+      align-items: center;
+    }
+    .nwa-nav-links a { font-size: 0.82rem; padding: 7px 10px; }
+    .nwa-nav-links .nav-divider { display: none; }
+  }
+
+  /* ── PAGE WRAPPER ── */
+  .nwa-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 16px 60px;
+  }
+
+  /* ── HERO HEADER ── */
+  .nwa-hero {
+    text-align: center;
+    padding: 36px 0 28px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 32px;
+  }
+  .nwa-hero-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 16px;
+    object-fit: cover;
+    margin-bottom: 16px;
+    border: 2px solid var(--border);
+  }
+  .nwa-hero h1 {
+    font-size: clamp(1.6rem, 5vw, 2.4rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--white);
+    margin-bottom: 6px;
+  }
+  .nwa-hero h1 span { color: var(--green); }
+  .nwa-hero p {
+    font-size: 0.95rem;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  /* ── SECTION TITLE ── */
+  .nwa-section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .nwa-section-title h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--white);
+  }
+  .nwa-section-title .count-badge {
+    background: var(--green2);
+    color: var(--white);
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+
+  /* ── FOOD GRID ── */
+  .food-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  @media (min-width: 480px) {
+    .food-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 768px) {
+    .food-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (min-width: 1024px) {
+    .food-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+
+  /* ── FOOD CARD ── */
+  .food-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.25s, transform 0.25s;
+    position: relative;
+  }
+  .food-card:hover {
+    border-color: var(--green);
+    transform: translateY(-3px);
+  }
+
+  /* Card image */
+  .food-card-img-wrap {
+    position: relative;
+    width: 100%;
+    padding-top: 65%;
+    overflow: hidden;
+    background: #111;
+  }
+  .food-card-img-wrap img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s;
+  }
+  .food-card:hover .food-card-img-wrap img { transform: scale(1.04); }
+
+  /* Status badge on image */
+  .food-status-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 9px;
+    border-radius: 20px;
+  }
+  .badge-available { background: rgba(76,175,80,0.9); color: #000; }
+  .badge-reserved  { background: rgba(245,197,24,0.9); color: #000; }
+  .badge-sold      { background: rgba(229,57,53,0.9);  color: #fff; }
+  .badge-pending   { background: rgba(100,100,100,0.9); color: #fff; }
+
+  /* Card body */
+  .food-card-body {
+    padding: 14px 14px 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .food-card-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  .food-card-restaurant {
+    font-size: 0.78rem;
+    color: var(--green);
+    font-weight: 600;
+  }
+
+  .food-card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-top: 8px;
+  }
+  .food-card-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+  .food-card-meta-row .icon { font-size: 0.85rem; flex-shrink: 0; }
+  .food-card-meta-row strong { color: var(--white); }
+
+  /* Price pill */
+  .food-price {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 3px;
+    background: rgba(76,175,80,0.1);
+    border: 1px solid rgba(76,175,80,0.2);
+    border-radius: 6px;
+    padding: 5px 10px;
+    margin-top: 10px;
+    align-self: flex-start;
+  }
+  .food-price-amount {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--green);
+  }
+  .food-price-currency {
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  /* Card footer — actions */
+  .food-card-footer {
+    padding: 12px 14px 14px;
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+  }
+  .btn-request {
+    flex: 1;
+    background: var(--green);
+    color: #000;
+    border: none;
+    border-radius: 7px;
+    padding: 11px 10px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+  .btn-request:hover { background: #66bb6a; transform: translateY(-1px); }
+
+  .btn-whatsapp {
+    background: #25d366;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    padding: 11px 12px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    flex-shrink: 0;
+  }
+  .btn-whatsapp:hover { background: #1fba59; }
+
+  .btn-disabled-card {
+    flex: 1;
+    background: var(--border);
+    color: var(--muted);
+    border: none;
+    border-radius: 7px;
+    padding: 11px 10px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: not-allowed;
+    text-align: center;
+  }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+  }
+  .empty-state-icon { font-size: 3rem; margin-bottom: 14px; display: block; }
+  .empty-state h3 { font-size: 1.1rem; color: var(--white); margin-bottom: 8px; }
+  .empty-state p { font-size: 0.875rem; color: var(--muted); }
+
+  /* ── ADD FOOD BUTTON ── */
+  .add-food-wrap {
+    position: fixed;
+    bottom: 24px;
+    right: 20px;
+    z-index: 50;
+  }
+  .btn-add-food {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--green);
+    color: #000;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 800;
+    padding: 14px 20px;
+    border-radius: 50px;
+    box-shadow: 0 8px 24px rgba(76,175,80,0.35);
+    transition: background 0.2s, transform 0.2s;
+  }
+  .btn-add-food:hover { background: #66bb6a; transform: translateY(-2px); }
+  .btn-add-food-disabled {
+    display: none;
+  }
+
+  /* ── FLASH MESSAGES ── */
+  .flash-wrap { margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px; }
+  .flash-message {
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: 1px solid;
+  }
+  .flash-message.success { background: rgba(76,175,80,0.1); border-color: var(--green); color: #a5d6a7; }
+  .flash-message.danger  { background: rgba(229,57,53,0.1);  border-color: var(--red);   color: #ef9a9a; }
+  .flash-message.info    { background: rgba(245,197,24,0.1); border-color: var(--yellow); color: #fff176; }
+</style>
+
+<!-- NAV -->
+<nav class="nwa-nav">
+  <div class="nwa-nav-inner">
+    <a href="/" class="nwa-logo">
+      <img src="{{ url_for('static', filename='icon.jpg') }}" alt="NoWasteAm">
+      <span class="nwa-logo-text">NoWaste<span>Am</span></span>
+    </a>
+
+    <button class="nwa-hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+
+    <div class="nwa-nav-links" id="navLinks">
+      <a href="/">Home</a>
+      <a href="/about/contact_us.html">Contact</a>
+      <a href="/about/index.html">About</a>
+      <div class="nav-divider"></div>
+      {% if current_user.is_authenticated %}
+        <a href="{{ url_for('users.account') }}">Account</a>
+        {% if current_user.email == "nanagilberto@gmail.com" %}
+          <a href="{{ url_for('admin.admin_') }}" class="nav-highlight">Admin</a>
         {% endif %}
+        <a href="{{ url_for('users.logout') }}" class="nav-highlight">Logout</a>
+        {% if current_user.role == "Restaurant" %}
+          <a href="{{ url_for('restaurant.dashboard') }}" class="nav-highlight">Dashboard</a>
+        {% endif %}
+      {% else %}
+        <a href="{{ url_for('auth.login') }}">Login</a>
+        <a href="{{ url_for('auth.register') }}" class="nav-highlight">Register</a>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE -->
+<div class="nwa-page">
+
+  <!-- Hero -->
+  <div class="nwa-hero">
+    <img src="{{ url_for('static', filename='icon.jpg') }}" class="nwa-hero-icon" alt="NoWasteAm">
+    <h1>Welcome to <span>NoWasteAm</span></h1>
+    <p>Share Food. Share Care 🌱</p>
+  </div>
+
+  <!-- Flash messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-wrap">
+        {% for category, message in messages %}
+          <div class="flash-message {{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
   {% endwith %}
-  {% for food in lists %}
-    {% if food.Role == "Restaurant" %} 
-     <a href="{{ url_for("restaurant.add_food") }}" class= "btn-success">Add Food ?</a>       
-    {% endif %}
- 
-    {% if food.Role != "Restaurant" %}
-      <a aria-disabled="true" class="btn-disabled" role="link"  >Add Food ?</a>
 
-    {% endif %}
-  {% endfor %}
+  <!-- Available Food -->
+  <div class="nwa-section-title">
+    <h2>Available Food</h2>
+    <span class="count-badge">{{ foods|length }} listing{{ 's' if foods|length != 1 }}</span>
+  </div>
 
-{% endblock content %} 
+  {% if foods %}
+    <div class="food-grid">
+      {% for food in foods %}
+        <div class="food-card">
+
+          <!-- Image + status badge -->
+          <div class="food-card-img-wrap">
+            <img src="{{ url_for('static', filename='burger.jpg') }}" alt="{{ food.name }}" loading="lazy">
+            {% if food.status == "Available" %}
+              <span class="food-status-badge badge-available">{{ food.status }}</span>
+            {% elif food.status == "Reserved!" %}
+              <span class="food-status-badge badge-reserved">Reserved</span>
+            {% elif food.status == "Sold Out!" %}
+              <span class="food-status-badge badge-sold">Sold Out</span>
+            {% else %}
+              <span class="food-status-badge badge-pending">{{ food.status }}</span>
+            {% endif %}
+          </div>
+
+          <!-- Body -->
+          <div class="food-card-body">
+            <div class="food-card-name">{{ food.name }}</div>
+            <div class="food-card-restaurant">{{ food.restaurant_name }}</div>
+
+            <div class="food-card-meta">
+              <div class="food-card-meta-row">
+                <span class="icon">📍</span>
+                <span>{{ food.location_name }}</span>
+              </div>
+              <div class="food-card-meta-row">
+                <span class="icon">🍽️</span>
+                <span><strong>{{ food.Quantity_Available }}</strong> portions left</span>
+              </div>
+              <div class="food-card-meta-row">
+                <span class="icon">📞</span>
+                <span>{{ food.phone }}</span>
+              </div>
+            </div>
+
+            <div class="food-price">
+              <span class="food-price-amount">{{ food.price }}</span>
+              <span class="food-price-currency">XAF</span>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="food-card-footer">
+            {% if food.status != "Reserved!" and food.status != "Accepted!" and food.status != "Sold Out!" and food.Quantity_Available > 0 %}
+              <form method="post" action="{{ url_for('orders.request_food', id=food.id) }}" style="flex:1; display:flex;">
+                <button type="submit" class="btn-request" style="width:100%">
+                  🛒 Reserve
+                </button>
+              </form>
+              {% if current_user.is_authenticated %}
+                <a href="https://wa.me/{{ current_user.phone }}" class="btn-whatsapp" target="_blank" rel="noopener">
+                  💬
+                </a>
+              {% endif %}
+            {% else %}
+              <span class="btn-disabled-card">
+                {% if food.status == "Sold Out!" or food.Quantity_Available == 0 %}
+                  Sold Out
+                {% else %}
+                  Reserved
+                {% endif %}
+              </span>
+            {% endif %}
+          </div>
+
+        </div>
+      {% endfor %}
+    </div>
+
+  {% else %}
+    <!-- Empty state -->
+    <div class="empty-state">
+      <span class="empty-state-icon">🍽️</span>
+      <h3>No food available right now</h3>
+      <p>Check back later — restaurants list surplus meals daily at closing time.</p>
+    </div>
+  {% endif %}
+
+</div>
+
+<!-- Floating Add Food button for restaurants -->
+{% for food in lists %}
+  {% if food.Role == "Restaurant" %}
+    <div class="add-food-wrap">
+      <a href="{{ url_for('restaurant.add_food') }}" class="btn-add-food">
+        ＋ Add Food
+      </a>
+    </div>
+  {% endif %}
+{% endfor %}
+
+<script>
+  // Hamburger toggle
+  const hamburger = document.getElementById('hamburger');
+  const navLinks  = document.getElementById('navLinks');
+  hamburger.addEventListener('click', () => {
+    navLinks.classList.toggle('open');
+  });
+  // Close nav when a link is clicked
+  navLinks.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => navLinks.classList.remove('open'));
+  });
+</script>
+
+{% endblock content %}
